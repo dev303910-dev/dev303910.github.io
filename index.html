@@ -19,7 +19,7 @@
             --text: #2c3e50;
             --text-secondary: #64748b;
             --border: #e2e8f0;
-            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1); /* ความสมูตระดับโปร */
+            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
@@ -43,7 +43,6 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.08);
             text-align: center;
             position: relative;
-            /* เพิ่ม Transition ให้กล่องยืดหดนุ่มนวล */
             transition: all 0.5s var(--ease-smooth); 
             overflow: hidden;
         }
@@ -111,7 +110,7 @@
             width: 100%; padding: 16px; border-radius: 16px; border: 1.5px solid var(--border);
             margin-bottom: 1rem; text-align: center; font-size: 1.1rem; outline: none; 
             transition: all 0.3s var(--ease-smooth);
-            box-sizing: border-box; /* ป้องกัน Input ล้น */
+            box-sizing: border-box;
         }
         input[type="number"]:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(94,106,210,0.1); }
 
@@ -122,6 +121,31 @@
             animation: fadeIn 0.6s var(--ease-smooth);
         }
         .qr-img { width: 100%; max-width: 200px; border-radius: 12px; }
+
+        /* --- Save Button Style --- */
+        .btn-save {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-family: 'Prompt', sans-serif;
+            cursor: pointer;
+            margin: 10px auto 5px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s;
+            width: fit-content;
+        }
+        .btn-save:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #fdfdfd;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
 
         .upload-box {
             border: 2px dashed #cbd5e1; padding: 25px; border-radius: 16px;
@@ -161,9 +185,8 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Animation Custom overrides */
         .animate__animated {
-            animation-duration: 0.5s; /* ทำให้ช้าลงนิดหน่อยเพื่อความนุ่มนวล */
+            animation-duration: 0.5s;
         }
     </style>
 </head>
@@ -176,8 +199,8 @@
         </div>
 
         <div id="step-1" class="animate__animated">
-            <div style="margin-top: 20px;"></div> <h2 id="txt-title">สนับสนุนเรา</h2>
-            <p class="subtitle" id="txt-subtitle">เลือกยอดเงินที่ต้องการโดเนท</p>
+            <div style="margin-top: 20px;"></div> <h2 id="txt-title"></h2>
+            <p class="subtitle" id="txt-subtitle">เลือกจำนวนเงิน</p>
             
             <div class="grid">
                 <button class="btn-opt" onclick="genQR(10)">10</button>
@@ -192,7 +215,7 @@
                 <button class="btn-opt" onclick="genQR(500)">500</button>
             </div>
             
-            <input type="number" id="manual-amount" placeholder="ระบุยอดเงินเอง">
+            <input type="number" id="manual-amount" placeholder="กำหนดเอง">
             <button class="btn-main" onclick="genQR(document.getElementById('manual-amount').value)" id="btn-gen">สร้างรายการ</button>
         </div>
 
@@ -202,6 +225,12 @@
             <div class="qr-area" id="qr-block">
                 <div id="loader" class="loading-spin"></div>
                 <img id="qr-display" class="qr-img hidden" src="" alt="QR">
+                
+                <button id="btn-save-qr" class="btn-save hidden" onclick="downloadQR()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span id="txt-save-qr">บันทึก QR</span>
+                </button>
+
                 <div><div class="timer" id="timer">05:00</div></div>
             </div>
 
@@ -239,6 +268,7 @@
                 upload: "คลิกเพื่อแนบสลิป",
                 btn_verify: "ยืนยันการโอนเงิน",
                 btn_back: "ย้อนกลับไปแก้ไข",
+                btn_save_qr: "บันทึก QR",
                 err_amount: "กรุณาระบุจำนวนเงินที่มากกว่า 0 บาท",
                 swal_success: "ขอบคุณครับ!",
                 swal_wait: "กำลังตรวจสอบ...",
@@ -253,6 +283,7 @@
                 upload: "Click to upload slip",
                 btn_verify: "Verify Payment",
                 btn_back: "Go Back",
+                btn_save_qr: "Save QR",
                 err_amount: "Please enter an amount greater than 0 THB",
                 swal_success: "Thank you!",
                 swal_wait: "Verifying...",
@@ -271,6 +302,7 @@
             document.getElementById('txt-upload-label').innerText = translations[lang].upload;
             document.getElementById('verify-btn').innerText = translations[lang].btn_verify;
             document.getElementById('btn-back-step').innerText = translations[lang].btn_back;
+            document.getElementById('txt-save-qr').innerText = translations[lang].btn_save_qr; // แปลภาษาปุ่ม Save
             
             if(currentAmount > 0) {
                 document.getElementById('target-txt').innerText = translations[lang].target.replace('{n}', currentAmount.toFixed(2));
@@ -287,32 +319,57 @@
             const step1 = document.getElementById('step-1');
             const step2 = document.getElementById('step-2');
 
-            // ใช้ Animation Fade Out/In
-            step1.classList.add('animate__fadeOut'); // เปลี่ยนเป็น fadeOut เฉยๆ จะนุ่มกว่า Slide
+            step1.classList.add('animate__fadeOut');
             
             setTimeout(() => {
                 step1.classList.add('hidden');
                 step1.classList.remove('animate__fadeOut');
                 
                 step2.classList.remove('hidden');
-                step2.classList.add('animate__fadeIn'); // เปลี่ยนเป็น fadeIn
+                step2.classList.add('animate__fadeIn');
                 
                 document.getElementById('target-txt').innerText = translations[currentLang].target.replace('{n}', currentAmount.toFixed(2));
                 
                 const qrUrl = `https://promptpay.io/${MY_PROMPTPAY_ID}/${currentAmount}.png`;
                 const qrImg = document.getElementById('qr-display');
+                const saveBtn = document.getElementById('btn-save-qr');
+
                 document.getElementById('qr-block').style.display = 'block';
                 document.getElementById('loader').classList.remove('hidden');
                 qrImg.classList.add('hidden');
+                saveBtn.classList.add('hidden'); // ซ่อนปุ่มก่อนโหลดเสร็จ
+
                 qrImg.src = qrUrl;
                 qrImg.onload = () => {
                     document.getElementById('loader').classList.add('hidden');
                     qrImg.classList.remove('hidden');
-                    // ใส่ Fade in ให้ QR Code
+                    saveBtn.classList.remove('hidden'); // แสดงปุ่มเมื่อรูปมา
                     qrImg.classList.add('animate__animated', 'animate__fadeIn');
                     startTimer(300);
                 };
-            }, 500); // รอ 500ms ให้ตรงกับ animation-duration ใน CSS
+            }, 500);
+        }
+
+        async function downloadQR() {
+            const qrImg = document.getElementById('qr-display');
+            if(qrImg.src) {
+                try {
+                    const response = await fetch(qrImg.src);
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `donation-qr-${currentAmount}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                } catch (e) {
+                    console.error('Download failed', e);
+                    // Fallback ถ้า fetch ไม่ได้ ให้เปิดหน้าต่างใหม่
+                    window.open(qrImg.src, '_blank');
+                }
+            }
         }
 
         function resetFlow() {
@@ -324,15 +381,15 @@
             
             setTimeout(() => {
                 step2.classList.add('hidden');
-                step2.classList.remove('animate__fadeOut', 'animate__fadeIn'); // Clean classes
+                step2.classList.remove('animate__fadeOut', 'animate__fadeIn');
                 
                 step1.classList.remove('hidden');
                 step1.classList.add('animate__fadeIn');
                 
-                // Reset Preview
                 document.getElementById('preview').style.display = 'none';
                 document.getElementById('upload-placeholder').style.display = 'block';
-                document.getElementById('slip-input').value = ""; // Clear file input
+                document.getElementById('slip-input').value = "";
+                document.getElementById('btn-save-qr').classList.add('hidden'); // ซ่อนปุ่มเมื่อ reset
             }, 500);
         }
 
@@ -357,7 +414,7 @@
                     const pre = document.getElementById('preview');
                     pre.src = e.target.result;
                     pre.style.display = 'block';
-                    pre.classList.add('animate__animated', 'animate__zoomIn'); // เพิ่ม Zoom effect
+                    pre.classList.add('animate__animated', 'animate__zoomIn');
                     document.getElementById('upload-placeholder').style.display = 'none';
                 }
                 reader.readAsDataURL(input.files[0]);
